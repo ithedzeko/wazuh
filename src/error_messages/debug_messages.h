@@ -32,7 +32,7 @@
 #define VU_INS_CPES_DIC       "(5417): Inserting Wazuh's CPE dictonary."
 #define VU_INS_MSU            "(5418): Inserting Microsoft Security Update dictonary."
 #define VU_INS_VUL_SEC        "(5419): Inserting %s vulnerabilities section."
-/* ID 5420 is available */
+#define VU_INS_DEB_FEED       "(5120): The Debian feed '%s' successfully downloaded and inserted."
 #define VU_INDEX_TIME         "(5421): It took '%ld' seconds to '%s' vulnerabilities."
 #define VU_INS_TEST_SEC       "(5422): Inserting '%s' vulnerabilities references."
 #define VU_UPDATE_VU_CO       "(5423): Inserting '%s' vulnerabilities conditions."

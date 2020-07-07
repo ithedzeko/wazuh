@@ -34,6 +34,7 @@ typedef struct provider_options {
     time_t update_interval;
     int update_since;
     long timeout;
+    char * security_tracker_location;
 } provider_options;
 
 static int wm_vuldet_get_interval(char *source, time_t *interval);
@@ -667,11 +668,16 @@ int wm_vuldet_read_provider(const OS_XML *xml, xml_node *node, update_node **upd
             updates[os_index]->url = os_list->url;
             updates[os_index]->path = os_list->path;
             updates[os_index]->port = os_list->port;
+
+            updates[os_index]->multi_path = p_options.multi_path;
+            updates[os_index]->multi_url = p_options.multi_url;
+
             if (os_list->allow && wm_vuldet_add_allow_os(updates[os_index], os_list->allow, 0)) {
                 wm_vuldet_remove_os_feed(rem, 0);
                 return OS_INVALID;
             }
-
+            p_options.multi_path = NULL;
+            p_options.multi_url = NULL;
             mdebug1("Added %s (%s) feed. Interval: %lus | Path: '%s' | Url: '%s' | Timeout: %lds",
                         pr_name,
                         os_list->version,
@@ -979,6 +985,7 @@ int wm_vuldet_add_multi_allow_os(update_node *update, char **src_os, char **dst_
 int wm_vuldet_read_provider_content(xml_node **node, char *name, char multi_provider, provider_options *options) {
     int i, j;
     int elements;
+    int8_t debian_enabled = (strcasestr(name, vu_feed_tag[FEED_DEBIAN])) ? 1 : 0;
 
     memset(options, '\0', sizeof(provider_options));
 
@@ -1009,14 +1016,14 @@ int wm_vuldet_read_provider_content(xml_node **node, char *name, char multi_prov
                 options->timeout = WM_VULNDETECTOR_DEFAULT_TIMEOUT;
             }
         } else if (!strcmp(node[i]->element, XML_PATH)) {
-            if (multi_provider) {
+            if (multi_provider || debian_enabled) {
                 os_free(options->multi_path);
                 os_strdup(node[i]->content, options->multi_path);
             } else {
                 mwarn("'%s' option can only be used in a multi-provider.", node[i]->element);
             }
         } else if (!strcmp(node[i]->element, XML_URL)) {
-            if (multi_provider) {
+            if (multi_provider || debian_enabled) {
                 os_free(options->multi_url);
                 os_strdup(node[i]->content, options->multi_url);
                 for (j = 0; node[i]->attributes && node[i]->attributes[j]; j++) {
