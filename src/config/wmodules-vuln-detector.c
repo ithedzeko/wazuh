@@ -690,6 +690,9 @@ int wm_vuldet_read_provider(const OS_XML *xml, xml_node *node, update_node **upd
             if (updates[os_index]->path && updates[os_index]->url) {
                 os_free(updates[os_index]->url);
             }
+            if (updates[os_index]->multi_path && updates[os_index]->multi_url) {
+                os_free(updates[os_index]->multi_url);
+            }
 
             os_list = os_list->next;
             wm_vuldet_remove_os_feed(rem, 0);
