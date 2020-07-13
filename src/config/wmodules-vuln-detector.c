@@ -34,7 +34,6 @@ typedef struct provider_options {
     time_t update_interval;
     int update_since;
     long timeout;
-    char * security_tracker_location;
 } provider_options;
 
 static int wm_vuldet_get_interval(char *source, time_t *interval);
@@ -669,15 +668,18 @@ int wm_vuldet_read_provider(const OS_XML *xml, xml_node *node, update_node **upd
             updates[os_index]->path = os_list->path;
             updates[os_index]->port = os_list->port;
 
-            updates[os_index]->multi_path = p_options.multi_path;
-            updates[os_index]->multi_url = p_options.multi_url;
+            if (updates[os_index]->dist_ref == FEED_DEBIAN && (p_options.multi_path || p_options.multi_url)) {
+                updates[os_index]->multi_path = p_options.multi_path;
+                updates[os_index]->multi_url = p_options.multi_url;
+                p_options.multi_path = NULL;
+                p_options.multi_url = NULL;
+            }
 
             if (os_list->allow && wm_vuldet_add_allow_os(updates[os_index], os_list->allow, 0)) {
                 wm_vuldet_remove_os_feed(rem, 0);
                 return OS_INVALID;
             }
-            p_options.multi_path = NULL;
-            p_options.multi_url = NULL;
+
             mdebug1("Added %s (%s) feed. Interval: %lus | Path: '%s' | Url: '%s' | Timeout: %lds",
                         pr_name,
                         os_list->version,
