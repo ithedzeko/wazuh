@@ -41,4 +41,5 @@
 #define FIM_WARN_WHODATA_ADD_RULE               "(6926): Unable to add audit rule for '%s'"
 #define FIM_DB_FULL_ALERT                       "(6927): Sending DB 100%% full alert."
 
+
 #endif /* WARN_MESSAGES_H */
