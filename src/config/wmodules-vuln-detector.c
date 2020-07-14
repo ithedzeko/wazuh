@@ -538,6 +538,8 @@ static int wm_vuldet_read_deprecated_feed_tag(const OS_XML *xml, xml_node *node,
         return 0;
     }
 
+    assert(updates[os_index] != NULL);
+
     updates[os_index]->old_config = 1;
     // Deprecated config don't support new option download_timeout
     updates[os_index]->timeout = 300;
