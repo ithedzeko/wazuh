@@ -250,7 +250,7 @@ int wm_vuldet_set_feed_version(char *feed, char *version, update_node **upd_list
 
     retval = os_index;
 end:
-    if (retval == OS_SUPP_SIZE || retval == OS_INVALID) {
+    if (retval == OS_SUPP_SIZE || retval == OS_INVALID || retval == OS_DEPRECATED) {
         wm_vuldet_free_update_node(upd);
         free(upd);
     }
@@ -653,7 +653,7 @@ int wm_vuldet_read_provider(const OS_XML *xml, xml_node *node, update_node **upd
                 goto end;
             } else if (os_index == OS_DEPRECATED) {
                 os_list = os_list->next;
-                wm_vuldet_remove_os_feed(rem, 0);
+                wm_vuldet_remove_os_feed(rem, 1);
                 continue;
             }
 
@@ -1093,12 +1093,12 @@ char wm_vuldet_provider_type(char *pr_name) {
 
 void wm_vuldet_remove_os_feed(vu_os_feed *feed, char full_r) {
     if (full_r) {
-        free(feed->url);
-        free(feed->path);
+        os_free(feed->url);
+        os_free(feed->path);
     }
-    free(feed->version);
-    free(feed->allow);
-    free(feed);
+    os_free(feed->version);
+    os_free(feed->allow);
+    os_free(feed);
 }
 
 void wm_vuldet_remove_os_feed_list(vu_os_feed *feeds) {
